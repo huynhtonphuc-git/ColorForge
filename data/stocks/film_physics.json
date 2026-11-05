@@ -1,0 +1,305 @@
+{
+ "velvia50": {
+  "stock": "velvia_50_sheet",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": {
+   "0.67": 0.679,
+   "0.83": 0.688,
+   "1.0": 0.697,
+   "1.17": 0.704,
+   "1.33": 0.709
+  },
+  "neutral_offset": [
+   0.0838,
+   -0.0046
+  ],
+  "acutance": {
+   "A": 0.775,
+   "K_um": [
+    6.45,
+    5.61,
+    4.77
+   ],
+   "per_layer_from_sheet": false,
+   "max_mtf_error": 0.015
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "velvia100f": {
+  "stock": "velvia_100f",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": {
+   "0.67": 0.628,
+   "0.83": 0.634,
+   "1.0": 0.636,
+   "1.17": 0.636,
+   "1.33": 0.636
+  },
+  "neutral_offset": [
+   0.0336,
+   -0.0362
+  ],
+  "acutance": {
+   "A": 0.475,
+   "K_um": [
+    6.17,
+    5.36,
+    4.56
+   ],
+   "per_layer_from_sheet": false,
+   "max_mtf_error": 0.08
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "provia": {
+  "stock": "provia_100f_sheet",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": {
+   "0.67": 0.789,
+   "0.83": 0.771,
+   "1.0": 0.694,
+   "1.17": 0.62,
+   "1.33": 0.627
+  },
+  "neutral_offset": [
+   0.0318,
+   -0.0236
+  ],
+  "acutance": {
+   "A": 0.74,
+   "K_um": [
+    7.18,
+    6.24,
+    5.31
+   ],
+   "per_layer_from_sheet": false,
+   "max_mtf_error": 0.094
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "astia": {
+  "stock": "astia_100f",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": null,
+  "neutral_offset": [
+   0.0402,
+   -0.0304
+  ],
+  "acutance": {
+   "A": 0.12,
+   "K_um": [
+    5.47,
+    4.76,
+    4.04
+   ],
+   "per_layer_from_sheet": false,
+   "max_mtf_error": 0.063
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "e100": {
+  "stock": "ektachrome_e100",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": {
+   "0.67": 0.727,
+   "0.83": 0.718,
+   "1.0": 0.721,
+   "1.17": 0.722,
+   "1.33": 0.725
+  },
+  "neutral_offset": [
+   0.0162,
+   -0.0617
+  ],
+  "acutance": {
+   "A": 0.0,
+   "K_um": [
+    6.09,
+    4.34,
+    3.62
+   ],
+   "per_layer_from_sheet": true,
+   "max_mtf_error": 0.05
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "e100g": {
+  "stock": "ektachrome_e100g",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": null,
+  "neutral_offset": [
+   0.0456,
+   -0.0873
+  ],
+  "acutance": {
+   "A": 0.0,
+   "K_um": [
+    6.08,
+    4.34,
+    3.62
+   ],
+   "per_layer_from_sheet": true,
+   "max_mtf_error": 0.051
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "e100vs": {
+  "stock": "ektachrome_e100vs",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": null,
+  "neutral_offset": [
+   0.018,
+   -0.1084
+  ],
+  "acutance": {
+   "A": 0.173,
+   "K_um": [
+    7.17,
+    4.41,
+    3.23
+   ],
+   "per_layer_from_sheet": true,
+   "max_mtf_error": 0.033
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "epn": {
+  "stock": "ektachrome_epn",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": null,
+  "neutral_offset": [
+   -0.0008,
+   -0.0619
+  ],
+  "acutance": {
+   "A": 0.524,
+   "K_um": [
+    9.51,
+    8.27,
+    7.03
+   ],
+   "per_layer_from_sheet": false,
+   "max_mtf_error": 0.088
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ },
+ "e100d": {
+  "stock": "ektachrome_100d_sheet",
+  "interimage": 1.0,
+  "interimage_why": "middle of the E-6 patent window; no per-film data exists",
+  "colour_reach": null,
+  "neutral_offset": [
+   0.0078,
+   -0.0836
+  ],
+  "acutance": {
+   "A": 0.0,
+   "K_um": [
+    7.36,
+    6.4,
+    5.44
+   ],
+   "per_layer_from_sheet": false,
+   "max_mtf_error": 0.086
+  },
+  "grain": {
+   "model": "dye_clouds",
+   "cloud_um": 5.0
+  },
+  "provenance": {
+   "interimage": "assumption, middle of the window in Fuji EP 0 442 323",
+   "neutral_offset": "assumption",
+   "acutance": "fitted to the sheet's MTF",
+   "cloud_um": "assumption",
+   "rms": "datasheet"
+  }
+ }
+}

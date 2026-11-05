@@ -1,0 +1,42 @@
+{
+ "id": "provia_digital",
+ "title": "Provia Digital",
+ "kind": "digital",
+ "film": "provia",
+ "provenance": "fitted look, not film data: bounded controls, calibrated and fused from statistics of publicly shared pictures; no images are used at run time",
+ "hue_families": [
+  "red",
+  "skin_orange",
+  "yellow",
+  "green",
+  "cyan",
+  "blue",
+  "magenta"
+ ],
+ "tone": [
+  1.849,
+  6.0,
+  5.591,
+  -1.958,
+  -5.997
+ ],
+ "gain": [
+  0.8,
+  0.95,
+  1.789,
+  1.29,
+  1.327,
+  0.801,
+  1.036
+ ],
+ "turn": [
+  -6.152,
+  -2.77,
+  -13.128,
+  1.498,
+  3.654,
+  -8.328,
+  0.13
+ ],
+ "dark": 0.403
+}

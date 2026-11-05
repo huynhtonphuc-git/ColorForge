@@ -1,0 +1,42 @@
+{
+ "id": "provia_legacy",
+ "title": "Provia Legacy",
+ "kind": "legacy",
+ "film": "provia",
+ "provenance": "fitted look, not film data: bounded controls, calibrated and fused from statistics of publicly shared pictures; no images are used at run time",
+ "hue_families": [
+  "red",
+  "skin_orange",
+  "yellow",
+  "green",
+  "cyan",
+  "blue",
+  "magenta"
+ ],
+ "tone": [
+  -3.162,
+  6.0,
+  8.0,
+  6.324,
+  -6.0
+ ],
+ "gain": [
+  1.002,
+  1.198,
+  1.8,
+  0.8,
+  0.941,
+  0.859,
+  1.183
+ ],
+ "turn": [
+  -3.42,
+  -2.993,
+  -7.992,
+  0.221,
+  -0.084,
+  -4.484,
+  -0.488
+ ],
+ "dark": 0.452
+}

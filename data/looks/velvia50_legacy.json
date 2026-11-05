@@ -1,0 +1,42 @@
+{
+ "id": "velvia50_legacy",
+ "title": "Velvia 50 Legacy",
+ "kind": "legacy",
+ "film": "velvia50",
+ "provenance": "fitted look, not film data: bounded controls, calibrated and fused from statistics of publicly shared pictures; no images are used at run time",
+ "hue_families": [
+  "red",
+  "skin_orange",
+  "yellow",
+  "green",
+  "cyan",
+  "blue",
+  "magenta"
+ ],
+ "tone": [
+  3.962,
+  5.947,
+  7.54,
+  0.125,
+  -5.974
+ ],
+ "gain": [
+  1.296,
+  1.294,
+  1.37,
+  1.106,
+  1.774,
+  0.931,
+  1.027
+ ],
+ "turn": [
+  -1.414,
+  2.142,
+  5.86,
+  5.894,
+  -3.836,
+  -4.22,
+  3.408
+ ],
+ "dark": 0.294
+}

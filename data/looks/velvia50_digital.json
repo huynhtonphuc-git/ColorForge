@@ -1,0 +1,42 @@
+{
+ "id": "velvia50_digital",
+ "title": "Velvia 50 Digital",
+ "kind": "digital",
+ "film": "velvia50",
+ "provenance": "fitted look, not film data: bounded controls, calibrated and fused from statistics of publicly shared pictures; no images are used at run time",
+ "hue_families": [
+  "red",
+  "skin_orange",
+  "yellow",
+  "green",
+  "cyan",
+  "blue",
+  "magenta"
+ ],
+ "tone": [
+  3.801,
+  5.949,
+  7.886,
+  6.406,
+  -5.674
+ ],
+ "gain": [
+  1.413,
+  1.162,
+  1.354,
+  1.288,
+  1.261,
+  0.8,
+  1.127
+ ],
+ "turn": [
+  0.523,
+  0.34,
+  6.32,
+  2.238,
+  9.751,
+  -4.738,
+  0.702
+ ],
+ "dark": 0.229
+}

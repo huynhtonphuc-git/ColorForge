@@ -1,0 +1,40 @@
+{
+ "id": "kodachrome_digital",
+ "title": "Kodachrome Digital",
+ "provenance": "fitted look, not film data: bounded controls, calibrated and fused from statistics of publicly shared pictures; no images are used at run time",
+ "hue_families": [
+  "red",
+  "skin_orange",
+  "yellow",
+  "green",
+  "cyan",
+  "blue",
+  "magenta"
+ ],
+ "tone": [
+  -5.465,
+  5.999,
+  7.996,
+  6.782,
+  -1.942
+ ],
+ "gain": [
+  1.014,
+  1.198,
+  1.793,
+  0.802,
+  1.204,
+  0.869,
+  0.803
+ ],
+ "turn": [
+  8.481,
+  -3.0,
+  -14.953,
+  1.571,
+  -0.154,
+  -4.568,
+  -5.467
+ ],
+ "dark": 0.557
+}

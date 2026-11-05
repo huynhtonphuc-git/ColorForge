@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ColorForge v0.5 · FilmForge</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{
+  --bg:#0d0c0b;--panel:#151311;--panel2:#1c1916;--line:#2b2723;--line2:#3a342e;
+  --text:#ece5d8;--muted:#978e81;--faint:#655e54;
+  --amber:#f4a630;--amber2:#ffcf7a;--red:#e4572e;--green:#7fc77a;--cine:#49b6c9;--nega:#d0648f;
+  --ui:Bahnschrift,"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:13px/1.4 var(--ui);overflow:hidden;user-select:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.app{display:grid;height:100vh;grid-template:50px 56px minmax(0,1fr) 112px/clamp(220px,24vw,312px) minmax(0,1fr) clamp(210px,23vw,300px);grid-template-areas:"top top top" "left rail right" "left stage right" "strip strip right"}
+
+/* top bar */
+.top{grid-area:top;display:flex;align-items:center;gap:26px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;letter-spacing:.2px}
+.brand b{font-weight:600}.brand span{color:var(--muted);font-weight:300}
+.mark{width:26px;height:26px;position:relative;isolation:isolate}
+.mark i{position:absolute;width:15px;height:15px;border-radius:50%;mix-blend-mode:screen}
+.mark i:nth-child(1){left:0;top:0;background:#e4572e}.mark i:nth-child(2){right:0;top:0;background:#7fc77a}.mark i:nth-child(3){left:5.5px;bottom:0;background:#4a78d8}
+.modules{display:flex;gap:2px;background:var(--bg);padding:3px;border-radius:9px;border:1px solid var(--line)}
+.modules button{padding:5px 14px;border-radius:6px;color:var(--faint);display:flex;gap:7px;align-items:center}
+.modules button em{font:normal 9px var(--mono);color:var(--faint);border:1px solid var(--line2);border-radius:3px;padding:0 3px;text-transform:uppercase}
+.modules button.on{background:var(--panel2);color:var(--amber2);box-shadow:inset 0 0 0 1px #5a4522}
+.modules button[disabled]{cursor:not-allowed}
+.spacer{flex:1}
+.device{display:flex;align-items:center;gap:8px;color:var(--muted);font:11px var(--mono)}
+.sl.locked{opacity:.38;pointer-events:none}
+.lamp{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.lamp.ok{background:var(--green);box-shadow:0 0 8px #7fc77a88}
+.lamp.run{background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 1s infinite}
+.lamp.err{background:var(--red)}
+@keyframes pulse{50%{opacity:.35}}
+
+/* engine rail */
+.rail{grid-area:rail;container-type:inline-size;display:flex;align-items:center;gap:8px;padding:0 16px;min-width:0;border-bottom:1px solid var(--line);background:linear-gradient(#141210,#100f0d)}
+.eng{display:flex;align-items:center;gap:9px;flex:1 1 0;min-width:0;position:relative;text-align:left}
+.eng .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line2);font:11px var(--mono);color:var(--muted);flex:none;background:var(--panel)}
+.eng .t{white-space:nowrap;line-height:1.15;min-width:0;overflow:hidden;flex:0 1 auto}.eng .t b{display:block;font-weight:500;font-size:12px;color:var(--muted)}.eng .t small{display:block;font:10px var(--mono);color:var(--faint);overflow:hidden;text-overflow:ellipsis}
+.eng .wire{flex:1 1 0;height:1px;background:var(--line2);min-width:0}
+@container (max-width:760px){.eng .wire{display:none}}
+@container (max-width:560px){.eng .t{display:none}.eng{justify-content:center}}
+.eng.done .n{border-color:#4d7a4a;color:var(--green)}.eng.done .t b{color:var(--text)}.eng.done .wire{background:#4d7a4a}
+.eng.run .n{border-color:var(--amber);color:var(--amber);box-shadow:0 0 12px #f4a63066;animation:pulse 1s infinite}.eng.run .t b{color:var(--amber2)}
+
+/* side panels */
+.side{background:var(--panel);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.left{grid-area:left;border-right:1px solid var(--line)}
+.right{grid-area:right;border-left:1px solid var(--line);display:flex;flex-direction:column}
+.sec{padding:14px 15px 15px;border-bottom:1px solid var(--line)}
+.sec h3{margin:0 0 11px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:var(--muted)}
+.sec h3 i{font:normal 10px var(--mono);width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:var(--panel2);color:var(--amber);border:1px solid var(--line2);letter-spacing:0}
+.sec h3 button{margin-left:auto;font:10px var(--mono);color:var(--faint);text-transform:none;letter-spacing:0}
+.sec h3 button:hover{color:var(--text)}
+.note{color:var(--faint);font-size:11px;margin:8px 0 0;line-height:1.35}
+
+/* input card */
+.open{display:flex;gap:6px}
+.btn{flex:1;padding:8px 10px;border-radius:7px;background:var(--panel2);border:1px solid var(--line2);text-align:center}
+.btn:hover{border-color:var(--amber);color:var(--amber2)}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:11px 0 0;font-size:12px}
+.facts dt{color:var(--faint)}.facts dd{margin:0;font-family:var(--mono);font-size:11px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.route{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
+.chip{font:10px var(--mono);padding:2px 6px;border-radius:4px;background:var(--bg);border:1px solid var(--line2);color:var(--muted)}
+.chip.on{color:var(--green);border-color:#3f5f3d}.chip.warn{color:var(--amber2);border-color:#6a5226}
+
+/* film shelf */
+.shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.mount{position:relative;aspect-ratio:1/1;border-radius:7px;background:#d9d2c3;color:#2a2622;padding:6px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;box-shadow:0 2px 6px #0008;overflow:hidden;transition:transform .12s}
+.mount:not([disabled]):hover{transform:translateY(-2px)}
+.mount .win{height:44%;border-radius:2px;display:flex;overflow:hidden;box-shadow:inset 0 0 0 1px #0006}.mount .win u{flex:1;text-decoration:none}
+.mount b{font-size:10.5px;font-weight:600;line-height:1.05;display:block}.mount small{font:8.5px var(--mono);color:#6d6559}
+.mount[disabled]{background:#3a352e;color:#958c7f;box-shadow:none;cursor:not-allowed}.mount[disabled] small{color:#7a7266}.mount[disabled] .win{opacity:.45}
+.mount.on{outline:2px solid var(--amber);outline-offset:2px}
+.mount em{position:absolute;right:4px;top:4px;font:normal 8px var(--mono);background:#0009;color:#d8cfbf;border-radius:3px;padding:0 3px}
+
+/* sliders */
+.sl{margin:0 0 12px}.sl:last-child{margin-bottom:0}
+.sl .h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;font-size:12px}
+.sl .h span:first-child{display:flex;gap:6px;align-items:center}
+.sl .v{font:11px var(--mono);color:var(--muted)}.sl.moved .v{color:var(--amber2)}
+.tag{font:9px var(--mono);border-radius:3px;padding:0 3px;border:1px solid var(--line2);color:var(--faint)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:16px;background:none;margin:0;display:block;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:var(--track,var(--line2))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--text);margin-top:-5px;box-shadow:0 1px 4px #000}
+input[type=range]:hover::-webkit-slider-thumb{background:var(--amber2)}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line2);border-radius:7px;padding:2px;margin-bottom:12px}
+.seg button{flex:1;padding:4px 2px;border-radius:5px;color:var(--muted);font-size:11.5px}.seg button.on{background:var(--panel2);color:var(--amber2)}
+.switch{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:12px;width:100%}
+.switch i{width:28px;height:15px;border-radius:9px;background:var(--line2);position:relative;transition:.15s}.switch i:after{content:"";position:absolute;width:11px;height:11px;border-radius:50%;background:var(--text);left:2px;top:2px;transition:.15s}
+.switch.on i{background:var(--amber)}.switch.on i:after{left:15px}.switch[disabled]{opacity:.4;cursor:not-allowed}
+.prov{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:11px;color:var(--muted);margin-top:4px}
+.prov span:nth-child(even){font:9.5px var(--mono);text-align:right}
+.d{color:var(--green)}.m{color:var(--cine)}.a{color:var(--amber2)}
+
+/* stage */
+.stage{grid-area:stage;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#191613,#0b0a09 75%)}
+.canvas{position:absolute;inset:18px;overflow:hidden;touch-action:none}
+.canvas.pan{cursor:grab}.canvas.pan.grab{cursor:grabbing}
+.layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.layer img{position:absolute;display:block;max-width:none;-webkit-user-drag:none}
+#lf img:first-child{box-shadow:0 18px 60px #000c,0 0 0 1px #000}
+.handle{position:absolute;top:0;bottom:0;width:1px;background:#fff9;cursor:ew-resize;z-index:2}
+.handle:before{content:"";position:absolute;inset:0 -9px}
+.handle b{position:absolute;top:50%;left:-13px;margin-top:-13px;width:26px;height:26px;border-radius:50%;background:#0009;border:1px solid #fff9;color:#fff;font:11px/24px var(--mono);text-align:center;backdrop-filter:blur(3px)}
+.lbl{position:absolute;top:9px;font:10px var(--mono);line-height:1.4;padding:1px 6px;border-radius:4px;background:#0009;color:#eee;letter-spacing:.4px;z-index:1}
+.tools{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:4px 6px 4px 12px;background:#100e0ccc;border:1px solid var(--line2);border-radius:9px;backdrop-filter:blur(6px);z-index:3;white-space:nowrap}
+.tools input{width:clamp(90px,16vw,220px)}
+.tools .zv{font:11px var(--mono);color:var(--muted);min-width:38px;text-align:right;cursor:pointer}
+.tools button{padding:4px 11px;border-radius:6px;color:var(--muted);font-size:12px}.tools button:hover{color:var(--text)}.tools button.on{background:var(--panel2);color:var(--amber2)}
+.empty{position:absolute;inset:26px;border:1.5px dashed var(--line2);border-radius:14px;display:grid;place-items:center;text-align:center;color:var(--muted);background:repeating-linear-gradient(90deg,transparent 0 79px,#ffffff05 79px 80px)}
+.empty h2{margin:0 0 6px;font-weight:300;font-size:25px;color:var(--text)}
+.empty p{margin:0}.empty small{display:block;margin-top:12px;font:10.5px var(--mono);color:var(--faint);max-width:440px;line-height:1.6}
+.drag .empty,.drag .canvas{outline:2px solid var(--amber);outline-offset:-8px}
+.work{position:absolute;left:50%;top:18px;transform:translateX(-50%);display:flex;gap:9px;align-items:center;padding:7px 14px;border-radius:9px;background:#100e0ce6;border:1px solid #5a4522;z-index:5;white-space:nowrap}
+.work small{color:var(--muted);font-family:var(--mono);font-size:10.5px}
+.ask{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#0009;backdrop-filter:blur(3px)}
+.ask>div{width:min(440px,calc(100vw - 32px));padding:20px 22px;border-radius:12px;background:var(--panel2);border:1px solid var(--line2);box-shadow:0 20px 70px #000}
+.ask h2{margin:0 0 6px;font-size:17px;font-weight:500}.ask p{margin:0 0 16px;color:var(--muted);line-height:1.45;overflow-wrap:anywhere}.ask b{color:var(--text);font-weight:500}
+.ask nav{display:flex;gap:8px}.ask nav button{flex:1;padding:9px 6px;border-radius:8px;border:1px solid var(--line2)}.ask nav button:hover{border-color:var(--amber)}
+.ask .yes{background:linear-gradient(#f9b84a,#e9962a);color:#201503;font-weight:600;border-color:transparent}.ask .stay{flex:.7;color:var(--muted)}
+.toast{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);max-width:70%;padding:8px 13px;border-radius:8px;background:#34140c;border:1px solid var(--red);color:#ffc9b8;z-index:6;user-select:text}
+
+/* right panel */
+.hist{height:84px;width:100%;display:block;background:var(--bg);border-radius:6px;border:1px solid var(--line)}
+.out{display:grid;gap:5px}
+.out button{display:flex;gap:9px;align-items:center;text-align:left;padding:7px 9px;border-radius:7px;border:1px solid var(--line)}
+.out button:hover{border-color:var(--line2)}.out button.on{border-color:var(--amber);background:#2a200f}
+.out i{width:13px;height:13px;border-radius:50%;border:1px solid var(--line2);flex:none}.out .on i{border:4px solid var(--amber)}
+.out b{font-weight:500;display:block;font-size:12px}.out small{display:block;font-size:10.5px;color:var(--faint);line-height:1.25}
+.export{position:sticky;bottom:8px;z-index:2;margin-top:10px;width:100%;padding:10px;border-radius:8px;background:linear-gradient(#f9b84a,#e9962a);color:#201503;font-weight:600;font-size:13.5px}
+.export:hover{filter:brightness(1.08)}.export[disabled]{background:var(--line);color:var(--faint);cursor:not-allowed;filter:none}
+.done{margin-top:9px;font-size:11px;color:var(--muted);line-height:1.35;user-select:text}.done b{color:var(--green);font-weight:500;word-break:break-all}
+.link{color:var(--amber2);text-decoration:underline;font-size:11px}
+
+/* film strip */
+.strip{grid-area:strip;position:relative;background:#050505;border-top:1px solid var(--line);overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.reel{display:flex;gap:3px;height:100%;padding:13px 8px;width:max-content;align-items:stretch;position:relative;min-width:100%;
+  background:repeating-linear-gradient(90deg,transparent 0 7px,#c8c0b2 7px 15px,transparent 15px 22px) 0 3px/22px 7px repeat-x,repeating-linear-gradient(90deg,transparent 0 7px,#c8c0b2 7px 15px,transparent 15px 22px) 0 calc(100% - 3px)/22px 7px repeat-x}
+.fr{position:relative;height:100%;min-width:70px;background:#17140f;flex:none;opacity:.72;transition:opacity .12s;overflow:hidden}
+.fr:hover{opacity:1}.fr.on{opacity:1;outline:2px solid var(--amber);outline-offset:-2px;z-index:1}
+.fr img{height:100%;display:block}.fr span{position:absolute;left:3px;bottom:2px;font:9px var(--mono);color:#ffb648;text-shadow:0 0 2px #000,0 0 2px #000;max-width:calc(100% - 6px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.gap{flex:none;display:flex;align-items:center;font:9.5px var(--mono);color:#ffb648;writing-mode:vertical-rl;transform:rotate(180deg);padding:0 5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand"><div class="mark" aria-hidden="true"><i></i><i></i><i></i></div><div><b>Color</b><span>Forge</span> <small style="opacity:.6;font-weight:400">v0.5</small></div></div>
+    <nav class="modules" aria-label="Modules">
+      <button disabled title="Cinema negative and print looks. Coming later">CineForge <em>soon</em></button>
+      <button class="on" aria-current="true">FilmForge</button>
+      <button disabled title="Scanned-negative reversal. Coming later">NegaForge <em>soon</em></button>
+    </nav>
+    <div class="spacer"></div>
+    <div class="device"><span class="lamp" id="devLamp"></span><span id="devName">starting</span></div>
+  </header>
+
+  <div class="rail" id="rail" role="group" aria-label="Engines"></div>
+
+  <aside class="side left">
+    <section class="sec"><h3><i>1</i>Input adapt</h3>
+      <div class="open"><button class="btn" id="browse">Open photo…</button></div>
+      <div id="inputInfo"><p class="note">Any phone raw, camera raw, DNG, JPEG or JPEG XL. Or drop a file on the table.</p></div><div id="inputSw"></div>
+    </section>
+    <section class="sec"><h3>Film</h3><div class="shelf" id="shelf"></div><p class="note" id="filmNote"></p></section>
+    <section class="sec"><h3><i>2</i>Physics<button id="physReset" title="Back to film values">reset</button></h3><div id="physics"></div></section>
+    <section class="sec"><h3><i>3</i>Color</h3>
+      <div class="seg" id="views" role="group" aria-label="How the slide is viewed"></div>
+      <div id="colour"></div>
+      <div class="prov" aria-label="Where the colour data comes from">
+        <span>Dye spectra</span><span class="d" data-src="sheet"></span><span>Tone curves</span><span class="d" data-src="sheet"></span><span>Spectral sensitivity</span><span class="d" data-src="sheet"></span>
+        <span>Dye separation</span><span class="a" data-src="interimage"></span><span>Grain level</span><span class="m" data-src="grain"></span>
+      </div>
+    </section>
+  </aside>
+
+  <main class="stage" id="stage">
+    <div class="empty" id="empty"><div><h2>Drop a photo on the light table</h2><p>Or pick a frame from the strip below</p><small>Input → choose film → output. Works on phone raw, camera raw, DNG 1.7, JPEG and JPEG XL.</small></div></div>
+    <div class="canvas" id="canvas" hidden>
+      <div class="layer" id="lf"><img id="film" alt="Film render"><img id="hi" alt="" hidden></div>
+      <div class="layer" id="lb" hidden><img id="before" alt="Before, without film"><img id="hiB" alt="" hidden></div>
+      <div class="handle" id="handle" hidden><b>&lsaquo;&rsaquo;</b></div>
+      <span class="lbl" id="lblL" hidden>SCENE</span><span class="lbl" id="lblR" hidden>KODACHROME 64</span>
+    </div>
+    <div class="work" id="work" hidden><span class="lamp run"></span><span id="workMsg"></span><small id="workTime"></small></div>
+    <div class="tools" id="tools" hidden>
+      <input type="range" id="zoom" min="0" max="100" step="0.5" value="0" aria-label="Zoom" title="Zoom. Mouse wheel works too, drag to move. Grain and fine detail are true at 100 % and above">
+      <span class="zv" id="zv" title="Click: Fit or 100 %">Fit</span>
+      <button id="tCmp" title="Compare with the scene before film (B)">Before / after</button>
+    </div>
+    <div class="toast" id="toast" hidden role="alert"></div>
+  </main>
+
+  <aside class="side right">
+    <section class="sec"><canvas class="hist" id="hist" width="540" height="168" aria-label="Histogram"></canvas></section>
+    <section class="sec"><h3><i>4</i>Calibrate<button id="adjReset">reset</button></h3><div id="calibrate"></div><p class="note" id="autoNote"></p></section>
+    <section class="sec creative"><h3>Creative engine</h3><div id="creative"></div><p class="note">Painting oil effect deepens the film's own colour, like stacked paint. No AI. Not film data.</p></section>
+    <section class="sec" style="border-bottom:0"><h3><i>5</i>Output</h3>
+      <div class="out" id="formats" role="radiogroup" aria-label="Output format"></div>
+      <button class="export" id="export" disabled>Export full resolution</button>
+      <div class="done" id="done"></div>
+    </section>
+  </aside>
+
+  <div class="ask" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askT">
+    <div><h2 id="askT">Keep your edit?</h2><p id="askP"></p>
+      <nav><button class="yes" id="askYes">Yes, export</button><button id="askNo">No, discard</button><button class="stay" id="askStay">Stay here</button></nav></div>
+  </div>
+
+  <footer class="strip" id="strip"><div class="reel" id="reel"></div></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id), el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const post=(u,b)=>fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})});
+const ENGINES=[['input','Input adapt','Raw to universal'],['physics','Physics','Sharpness, grain'],['color','Color','Dyes, tone'],['calibrate','Calibrate','Your tweaks'],['output','Output','Full resolution']];
+const CAL=[
+ {k:'exposure',l:'Exposure',min:-3,max:3,step:.05,f:v=>(v>0?'+':'')+v.toFixed(2)+' EV',track:null},
+ {k:'temp',l:'White balance',min:-100,max:100,step:1,f:v=>v===0?'camera':(v>0?'warm ':'cool ')+Math.abs(v),track:'linear-gradient(90deg,#4f86d9,#3a342e 50%,#e9a13c)'},
+ {k:'tint',l:'Tint',min:-100,max:100,step:1,f:v=>v===0?'camera':(v>0?'magenta ':'green ')+Math.abs(v),track:'linear-gradient(90deg,#5cb860,#3a342e 50%,#c95fb0)'},
+ {k:'contrast',l:'Contrast',min:-100,max:100,step:1,f:v=>(v>0?'+':'')+v},
+ {k:'low',l:'Shadow contrast',min:-100,max:100,step:1,f:v=>(v>0?'+':'')+v},
+ {k:'mid',l:'Mid contrast',min:-100,max:100,step:1,f:v=>(v>0?'+':'')+v},
+ {k:'high',l:'Highlight contrast',min:-100,max:100,step:1,f:v=>(v>0?'+':'')+v},
+ {k:'saturation',l:'Saturation',min:-100,max:100,step:1,f:v=>(v>0?'+':'')+v},
+ {k:'vibrance',l:'Vibrance',min:-100,max:100,step:1,f:v=>(v>0?'+':'')+v}];
+const PHY=[
+ {k:'micro',l:'Micro-contrast',tag:'film at 100',min:0,max:2,step:.05,def:1,f:v=>Math.round(v*100)+'%'},
+ {k:'clarity',l:'Clarity',tag:'0 = pure film',min:-1,max:1,step:.05,def:0,f:v=>Math.round(v*100)},
+ {k:'grain',l:'Film grain',tag:'at 50',min:0,max:1,step:.05,def:.5,f:v=>Math.round(v*100)}];
+const COL=[{k:'interimage',l:'Dye separation',tag:'film at 100%',min:0,max:1.2,step:.01,def:.6,f:v=>Math.round(v/(film()?film().defaults.interimage:.6)*100)+'%'}];
+const VIEWS=[['lightbox','Lightbox'],['scan','Slide scan'],['projected','Projected']];
+let S={},adj=Object.fromEntries(CAL.map(c=>[c.k,0]));adj.view='lightbox';adj.oil=0;adj.oil_thick=0;
+let phys={film:'k14',lens:true,ai_micro:false,tone:false,camera_sharp:false,grain:.5,micro:1,clarity:0,deblur:true,interimage:.6,denoise:'auto'},fmt='jpeg_hdr',gen=-1,cmp=false,curPath=null;
+const q=()=>new URLSearchParams(adj).toString();
+
+function slider(c,value,onInput,onCommit){
+  const w=el('div','sl'),h=el('div','h',`<span>${c.l}${c.tag?` <em class="tag" style="font-style:normal">${c.tag}</em>`:''}</span><span class="v"></span>`),i=el('input');
+  i.type='range';i.min=c.min;i.max=c.max;i.step=c.step;i.value=value;i.setAttribute('aria-label',c.l);
+  let def=c.def??0;const show=()=>{const v=+i.value;w.querySelector('.v').textContent=c.f(v);w.classList.toggle('moved',Math.abs(v-def)>1e-6);
+    if(!c.track){const p=(v-c.min)/(c.max-c.min)*100,o=(def-c.min)/(c.max-c.min)*100,[a,b]=p<o?[p,o]:[o,p];i.style.setProperty('--track',`linear-gradient(90deg,var(--line2) ${a}%,var(--amber) ${a}%,var(--amber) ${b}%,var(--line2) ${b}%)`)}else i.style.setProperty('--track',c.track)};
+  i.addEventListener('input',()=>{show();onInput&&onInput(+i.value)});i.addEventListener('change',()=>onCommit&&onCommit(+i.value));
+  i.addEventListener('dblclick',()=>{i.value=def;show();onInput&&onInput(def);onCommit&&onCommit(def)});
+  w.append(h,i);show();w.set=v=>{i.value=v;show()};w.setDefault=v=>{def=v;show()};w.setEnabled=on=>{i.disabled=!on;w.classList.toggle('locked',!on)};w.setRange=(a,b)=>{i.min=a;i.max=b;c.min=a;c.max=b;show()};w.setTag=t=>{const e=w.querySelector('.tag');if(e)e.textContent=t};return w;
+}
+const calEls={},phyEls={};
+CAL.forEach(c=>{const s=slider(c,0,v=>{adj[c.k]=v;requestView()});calEls[c.k]=s;$('calibrate').append(s)});
+function commitPhys(){if(curPath&&S.ready){post('/api/physics',phys);S.busy=true;showBusy()}}
+PHY.forEach(c=>{const s=slider(c,phys[c.k],v=>phys[c.k]=v,commitPhys);phyEls[c.k]=s;$('physics').append(s)});
+const sw=(id,label,get,set,after)=>{const b=el('button','switch',`<span>${label}</span><i></i>`);b.id=id;b.setAttribute('role','switch');b.onclick=()=>{if(b.disabled)return;set(!get());paint();(after||commitPhys)()};const paint=()=>{b.classList.toggle('on',get());b.setAttribute('aria-checked',get())};paint();b.paint=paint;return b};
+const swDeblur=sw('swDeblur','Remove lens and sensor blur',()=>phys.deblur,v=>phys.deblur=v),swDn=sw('swDn','AI denoise (raw)',()=>phys.denoise==='auto',v=>phys.denoise=v?'auto':'off');
+const swMicro=sw('swMicro','AI micro-contrast',()=>phys.ai_micro,v=>phys.ai_micro=v),swTone=sw('swTone','Tonal enhancement',()=>phys.tone,v=>phys.tone=v);
+swMicro.title='Fine detail from an AI model, added before the film. Brightness only: colour and broad tone stay as captured. A mask of its changes is saved with each export. Only for low-bit input.';swTone.title='Edge-aware local contrast, added before the film. No AI. Only for low-bit input.';
+const swLens=sw('swLens','Lens correction',()=>phys.lens,v=>phys.lens=v);swLens.title='Vignetting, distortion and colour fringes, from the Lensfun database. Used only when the file names a lens Lensfun knows.';
+$('inputSw').append(swDn,swLens,swDeblur,swMicro,swTone);
+const swCam=sw('swCam','Keep camera sharpness',()=>phys.camera_sharp,v=>phys.camera_sharp=v);swCam.title='Off: fine contrast is mapped to this film, from its own data sheet. On: skips the film\'s light scatter and keeps the most detail the file has. Colour, edge effect and grain stay. No longer matches the sheet\'s MTF.';$('physics').prepend(swCam);
+let oilOn=false,oilLevel=50,oilThick=0;const oilApply=()=>{adj.oil=oilOn?oilLevel:0;adj.oil_thick=oilOn?oilThick:0;requestView()};
+const swOil=sw('swOil','Painting oil effect',()=>oilOn,v=>{oilOn=v;oilEl.setEnabled(v);oilThickEl.setEnabled(v)},oilApply);swOil.title='Colour that deepens like stacked oil paint, in the film\'s own dyes. Greys stay. No AI. Not film data.';
+const oilEl=slider({k:'oil',l:'Colour depth',tag:'default in the middle',min:0,max:100,step:1,def:50,f:v=>Math.round(v)},50,v=>{oilLevel=v;oilApply()});
+const oilThickEl=slider({k:'oil_thick',l:'Layer thickness',tag:'from 0',min:0,max:100,step:1,def:0,f:v=>Math.round(v)},0,v=>{oilThick=v;oilApply()});
+oilEl.setEnabled(false);oilThickEl.setEnabled(false);$('creative').append(swOil,oilEl,oilThickEl);
+COL.forEach(c=>{const s=slider(c,phys[c.k],v=>phys[c.k]=v,commitPhys);phyEls[c.k]=s;$('colour').append(s)});
+VIEWS.forEach(([k,l])=>{const b=el('button',k===adj.view?'on':'',l);b.onclick=()=>{adj.view=k;[...$('views').children].forEach(x=>x.classList.toggle('on',x===b));requestView()};$('views').append(b)});
+ENGINES.forEach(([k,t,s],i)=>{const e=el('div','eng',`<span class="n" title="${t}">${i+1}</span><span class="t"><b>${t}</b><small id="eng_${k}">${s}</small></span>${i<4?'<span class="wire"></span>':''}`);e.id='E'+k;$('rail').append(e)});
+$('adjReset').onclick=()=>{CAL.forEach(c=>{adj[c.k]=0;calEls[c.k].set(0)});requestView()};
+$('physReset').onclick=()=>{Object.assign(phys,{clarity:0},film().defaults);Object.entries(phyEls).forEach(([k,s])=>s.set(phys[k]));commitPhys()};
+
+// ---- preview: only the newest request matters while a slider moves
+let viewBusy=false,viewDirty=false;
+function requestView(){if(gen<0)return;viewDirty=true;if(!viewBusy)pump()}
+async function pump(){
+  viewBusy=true;
+  while(viewDirty){viewDirty=false;const t=performance.now();
+    const r=await fetch('/api/view.jpg?'+q()).catch(()=>null);
+    if(r&&r.ok){const u=URL.createObjectURL(await r.blob());await loadImg($('film'),u);drawHist($('film'));
+      if(cmp){const b=await fetch('/api/before.jpg?'+q());if(b.ok)await loadImg($('before'),URL.createObjectURL(await b.blob()))}}
+    await loadHi();setEng('color','done',Math.round(performance.now()-t)+' ms')}
+  viewBusy=false}
+function loadImg(img,u){return new Promise(res=>{const old=img.src;img.onload=()=>{if(old.startsWith('blob:'))URL.revokeObjectURL(old);res()};img.onerror=res;img.src=u})}
+function drawHist(img){const W=128,H=Math.max(1,Math.round(W*img.naturalHeight/img.naturalWidth)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0,W,H);const d=x.getImageData(0,0,W,H).data,b=[new Uint32Array(128),new Uint32Array(128),new Uint32Array(128)];
+  for(let i=0;i<d.length;i+=4){b[0][d[i]>>1]++;b[1][d[i+1]>>1]++;b[2][d[i+2]>>1]++}
+  const g=$('hist'),o=g.getContext('2d');o.clearRect(0,0,g.width,g.height);o.globalCompositeOperation='screen';const m=Math.max(...b.flatMap(a=>[...a].slice(2,126)),1);
+  ['#e4572e','#6fbf6a','#4a78d8'].forEach((col,k)=>{o.fillStyle=col+'cc';o.beginPath();o.moveTo(0,g.height);for(let i=0;i<128;i++)o.lineTo(i/127*g.width,g.height-Math.min(1,Math.sqrt(b[k][i]/m))*g.height*.96);o.lineTo(g.width,g.height);o.fill()});
+  o.globalCompositeOperation='source-over';o.strokeStyle='#ffffff14';o.lineWidth=1;for(const p of[.25,.5,.75]){o.beginPath();o.moveTo(p*g.width,0);o.lineTo(p*g.width,g.height);o.stroke()}}
+
+// ---- viewer: one scale (z = CSS pixels per source pixel) and one origin (vx, vy = source pixel at the canvas corner)
+const V={z:1,vx:0,vy:0,fit:1,atFit:true,hi:null,token:0,timer:0,split:.5};const dpr=()=>devicePixelRatio||1,cv=()=>$('canvas');
+const size=()=>{const c=S.capture;return c?[c.width,c.height]:[1,1]};
+const MAXZ=()=>Math.max(4/dpr(),V.fit*1.01);
+function fitScale(){const[W,H]=size(),r=cv().getBoundingClientRect();return Math.min(r.width/W,r.height/H)||1}
+function clampView(){const[W,H]=size(),r=cv().getBoundingClientRect(),vw=r.width/V.z,vh=r.height/V.z;
+  V.vx=vw>=W?(W-vw)/2:Math.max(0,Math.min(W-vw,V.vx));V.vy=vh>=H?(H-vh)/2:Math.max(0,Math.min(H-vh,V.vy))}
+function put(img,x,y,w,h){img.style.left=(x-V.vx)*V.z+'px';img.style.top=(y-V.vy)*V.z+'px';img.style.width=w*V.z+'px';img.style.height=h*V.z+'px'}
+function place(){if(!S.capture)return;const[W,H]=size(),r=cv().getBoundingClientRect();clampView();put($('film'),0,0,W,H);put($('before'),0,0,W,H);
+  const hide=!V.hi;$('hi').hidden=hide;$('hiB').hidden=hide||!cmp;if(V.hi)for(const n of['hi','hiB'])put($(n),V.hi.x,V.hi.y,V.hi.w,V.hi.h);
+  const px=V.z*dpr()>=2?'pixelated':'auto';for(const n of['film','before','hi','hiB'])$(n).style.imageRendering=px;
+  const L=Math.max(0,-V.vx*V.z),R=Math.min(r.width,(W-V.vx)*V.z),x=L+V.split*(R-L);
+  $('handle').style.left=x+'px';$('lb').style.clipPath=`inset(0 ${r.width-x}px 0 0)`;$('lblL').style.left=L+9+'px';$('lblR').style.right=r.width-R+9+'px';
+  cv().classList.toggle('pan',(W*V.z>r.width+1||H*V.z>r.height+1));
+  const zv=$('zv');zv.textContent=V.atFit?'Fit':Math.round(V.z*dpr()*100)+'%'}
+function zoomSlider(){const f=V.fit,m=MAXZ();$('zoom').value=V.atFit?0:Math.log(V.z/f)/Math.log(m/f)*100}
+function setZoom(z,ax,ay){const r=cv().getBoundingClientRect();ax=ax??r.width/2;ay=ay??r.height/2;const sx=V.vx+ax/V.z,sy=V.vy+ay/V.z;
+  z=Math.max(V.fit,Math.min(MAXZ(),z));if(Math.abs(z*dpr()-1)<.03)z=1/dpr();V.z=z;V.atFit=z<=V.fit*1.002;V.vx=sx-ax/z;V.vy=sy-ay/z;place();queueHi()}
+function resetView(){V.fit=fitScale();V.z=V.fit;V.atFit=true;V.hi=null;V.token++;zoomSlider();place()}
+const queueHi=()=>{clearTimeout(V.timer);V.timer=setTimeout(loadHi,140)};
+/** True pixels for what is on screen, whenever the preview would be enlarged. The preview stays underneath, so moving never shows a hole. */
+async function loadHi(){const[W,H]=size(),r=cv().getBoundingClientRect(),pv=$('film').naturalWidth/W||1;const tok=++V.token;
+  if(V.z*dpr()<=pv*1.05){V.hi=null;place();return}
+  const x=Math.max(0,Math.floor(V.vx)),y=Math.max(0,Math.floor(V.vy)),w=Math.min(W-x,Math.ceil(r.width/V.z)+2),h=Math.min(H-y,Math.ceil(r.height/V.z)+2);
+  if(w>4096||h>4096){V.hi=null;place();return}
+  const url=wh=>`/api/crop.jpg?${q()}&x=${x}&y=${y}&w=${w}&h=${h}&which=${wh}`;
+  const a=await fetch(url('film')).catch(()=>null),b=cmp?await fetch(url('before')).catch(()=>null):null;if(tok!==V.token||!a||!a.ok)return;
+  await loadImg($('hi'),URL.createObjectURL(await a.blob()));if(b&&b.ok)await loadImg($('hiB'),URL.createObjectURL(await b.blob()));if(tok!==V.token)return;V.hi={x,y,w,h};place()}
+function setCmp(v){cmp=v;$('tCmp').classList.toggle('on',v);for(const n of['lb','handle','lblL','lblR'])$(n).hidden=!v;if(v)requestView();else place()}
+$('tCmp').onclick=()=>setCmp(!cmp);
+$('zoom').addEventListener('input',e=>{const v=+e.target.value;setZoom(v<=0?V.fit:V.fit*Math.pow(MAXZ()/V.fit,v/100))});
+const toggle100=(ax,ay)=>{setZoom(V.atFit?1/dpr():V.fit,ax,ay);zoomSlider()};
+$('zv').onclick=()=>toggle100();
+cv().addEventListener('wheel',e=>{e.preventDefault();const r=cv().getBoundingClientRect();setZoom(V.z*Math.exp(-e.deltaY*.0015),e.clientX-r.left,e.clientY-r.top);zoomSlider()},{passive:false});
+cv().addEventListener('dblclick',e=>{const r=cv().getBoundingClientRect();toggle100(e.clientX-r.left,e.clientY-r.top)});
+{let st=null;cv().addEventListener('pointerdown',e=>{if(e.target===$('handle')||$('handle').contains(e.target))return;st={x:e.clientX,y:e.clientY,vx:V.vx,vy:V.vy};cv().setPointerCapture(e.pointerId);cv().classList.add('grab')});
+ cv().addEventListener('pointermove',e=>{if(!st)return;V.vx=st.vx-(e.clientX-st.x)/V.z;V.vy=st.vy-(e.clientY-st.y)/V.z;place()});
+ const up=()=>{if(st){st=null;cv().classList.remove('grab');queueHi()}};cv().addEventListener('pointerup',up);cv().addEventListener('pointercancel',up)}
+{let on=false;const h=$('handle');h.addEventListener('pointerdown',e=>{on=true;h.setPointerCapture(e.pointerId);e.stopPropagation()});
+ h.addEventListener('pointermove',e=>{if(!on)return;const[W]=size(),r=cv().getBoundingClientRect(),L=Math.max(0,-V.vx*V.z),R=Math.min(r.width,(W-V.vx)*V.z);V.split=Math.max(0,Math.min(1,(e.clientX-r.left-L)/(R-L)));place()});
+ h.addEventListener('pointerup',()=>on=false)}
+new ResizeObserver(()=>{if(cv().hidden||!S.capture)return;const was=V.atFit;V.fit=fitScale();if(was)V.z=V.fit;else V.z=Math.max(V.z,V.fit);zoomSlider();place();queueHi()}).observe($('stage'));
+
+// ---- shelf, formats, strip
+function film(){return S.films&&S.films.find(x=>x.id===phys.film)}
+function showFilm(){const f=film();for(const k of ['interimage','grain','micro','clarity'])phyEls[k].setDefault(f.defaults[k]);phyEls.interimage.setRange(0,2*f.defaults.interimage);phyEls.interimage.set(phys.interimage);for(const k of ['micro','grain']){phyEls[k].setRange(0,2*f.defaults[k]);phyEls[k].set(phys[k])}for(const k in f.tags)phyEls[k].setTag(f.tags[k]);document.querySelectorAll('[data-src]').forEach(e=>e.textContent=f.sources[e.dataset.src]);document.querySelectorAll('.mount').forEach(m=>m.classList.toggle('on',m.dataset.film===phys.film));$('filmNote').textContent=f.note+'.';$('lblR').textContent=f.name.toUpperCase()}
+function pickFilm(id){if(phys.film===id)return;phys.film=id;Object.assign(phys,film().defaults);showFilm();for(const k of ['interimage','grain','micro','clarity'])phyEls[k].set(phys[k]);swCam.paint();cleanKey=null;commitPhys()}  // a card always starts from its own defaults, with no prompt
+function buildStatic(){
+  $('shelf').innerHTML='';S.films.forEach(f=>{const b=el('button','mount'+(f.ready?' on':''),`<div class="win">${f.swatch.map(c=>`<u style="background:${c}"></u>`).join('')}</div><div><b>${f.name}</b><small style="display:block">${f.process}</small><small style="display:block">${f.era}</small></div>${f.ready?'':'<em>soon</em>'}`);b.disabled=!f.ready;b.title=f.note;b.dataset.film=f.id;b.onclick=()=>pickFilm(f.id);$('shelf').append(b)});showFilm();
+  $('formats').innerHTML='';S.formats.forEach(f=>{const b=el('button',f.id===fmt?'on':'',`<i></i><span><b>${f.name}</b><small>${f.detail}</small></span>`);b.setAttribute('role','radio');b.onclick=()=>{fmt=f.id;[...$('formats').children].forEach(x=>x.classList.toggle('on',x===b))};$('formats').append(b)});
+}
+async function buildStrip(){const files=await (await fetch('/api/files')).json();const reel=$('reel');reel.innerHTML='';let g=null;
+  files.forEach(f=>{if(f.group!==g){g=f.group;reel.append(el('div','gap',g))}
+    const d=el('button','fr',`<img loading="lazy" alt="" draggable="false" src="/api/thumb?path=${encodeURIComponent(f.path)}" onerror="this.remove()"><span>${f.name}</span>`);d.title=f.name+' · '+f.mb+' MB';d.dataset.path=f.path;d.onclick=()=>requestOpen(f.path);d.draggable=true;d.ondragstart=e=>{e.dataTransfer.setData('application/x-colorforge-path',f.path);e.dataTransfer.effectAllowed='copy'};reel.append(d)})}
+function openPath(p){curPath=p;post('/api/open',{path:p,physics:phys,purge:true});S.busy=true;mark(p);showBusy()}
+
+// ---- leaving a photo: offer to export an unsaved edit, then reset everything and free the memory
+const PHYS0={lens:true,ai_micro:false,tone:false,camera_sharp:false,grain:.5,micro:1,clarity:0,deblur:true,interimage:.6,denoise:'auto'};  // the chosen film stays when changing photo
+const editKey=()=>JSON.stringify([adj,{...phys,film:0,interimage:film()?+(phys.interimage/film().defaults.interimage).toFixed(3):0}]);let cleanKey=null,savedKey=null;
+const isEdited=()=>gen>=0&&cleanKey!==null&&editKey()!==cleanKey&&editKey()!==savedKey;
+function resetAll(){CAL.forEach(c=>{adj[c.k]=0;calEls[c.k].set(0)});adj.oil=0;adj.oil_thick=0;oilOn=false;oilLevel=50;oilThick=0;oilEl.set(50);oilThickEl.set(0);oilEl.setEnabled(false);oilThickEl.setEnabled(false);swOil.paint();adj.view='lightbox';[...$('views').children].forEach((x,i)=>x.classList.toggle('on',i===0));
+  Object.assign(phys,PHYS0,film()?film().defaults:{});Object.entries(phyEls).forEach(([k,s])=>s.set(phys[k]));swDeblur.paint();swDn.paint();swLens.paint();swCam.paint();swMicro.paint();swTone.paint();setCmp(false);V.split=.5;V.hi=null;V.token++;
+  ENGINES.forEach(([k,,sub])=>setEng(k,null,sub));cleanKey=editKey();savedKey=null}
+const idle=async()=>{for(;;){const n=await (await fetch('/api/state')).json();if(!n.busy)return n;await new Promise(r=>setTimeout(r,300))}};
+function askKeep(){return new Promise(res=>{const f=S.formats.find(x=>x.id===fmt);$('askP').innerHTML=`<b>${S.file}</b> has changes that are not exported. Yes exports it as ${f.name} to the output folder. No discards them. Either way the sliders reset and its memory is freed.`;
+  $('ask').hidden=false;$('askYes').focus();const done=v=>{$('ask').hidden=true;removeEventListener('keydown',key,true);res(v)},key=e=>{if(e.key==='Escape'){e.stopPropagation();done('stay')}};
+  addEventListener('keydown',key,true);$('askYes').onclick=()=>done('yes');$('askNo').onclick=()=>done('no');$('askStay').onclick=()=>done('stay')})}
+/** Returns true when it is fine to move on. */
+async function leavePhoto(){if(isEdited()){const a=await askKeep();if(a==='stay')return false;
+    if(a==='yes'){post('/api/export',{format:fmt,adjust:adj});S.busy=true;showBusy();await new Promise(r=>setTimeout(r,150));const n=await idle();if(n.error)return false}}
+  resetAll();return true}
+async function requestOpen(p){if(p===curPath&&gen>=0)return;if(await leavePhoto())openPath(p);else mark(curPath)}
+function mark(p){document.querySelectorAll('.fr').forEach(f=>f.classList.toggle('on',f.dataset.path===p))}
+$('browse').onclick=()=>post('/api/browse').then(r=>r.json()).then(r=>{if(r.path)buildStrip().then(()=>requestOpen(r.path))});
+$('export').onclick=()=>{savedKey=editKey();post('/api/export',{format:fmt,adjust:adj});S.busy=true;showBusy();setEng('output','run')};
+const st=$('stage');['dragenter','dragover'].forEach(n=>st.addEventListener(n,e=>{e.preventDefault();$('app').classList.add('drag')}));st.addEventListener('dragleave',e=>{if(e.target===st)$('app').classList.remove('drag')});
+st.addEventListener('drop',async e=>{e.preventDefault();$('app').classList.remove('drag');const own=e.dataTransfer.getData('application/x-colorforge-path');if(own){requestOpen(own);return}const f=e.dataTransfer.files[0];if(!f||!(await leavePhoto()))return;S.busy=true;showBusy();const r=await (await fetch('/api/upload?name='+encodeURIComponent(f.name),{method:'POST',body:f})).json();curPath=r.path;buildStrip().then(()=>mark(r.path))});
+
+// ---- state polling
+function setEng(k,s,txt){const e=$('E'+k);e.classList.remove('run','done');if(s)e.classList.add(s);if(txt!=null)$('eng_'+k).textContent=txt}
+let busyStart=0;
+function showBusy(){$('work').hidden=false;if(!busyStart)busyStart=Date.now();$('export').disabled=true}
+function renderInput(){const c=S.capture,p=S.plan;if(!c||!p){$('inputInfo').innerHTML=S.file?`<p class="note">${S.file}</p>`:$('inputInfo').innerHTML;return}
+  const rows=[['Source',[c.make,c.model].filter(Boolean).join(' ')||'unknown'],['Type',p.kind],['Size',`${c.width} × ${c.height}`],['Bit depth',p.bits?p.bits+' bit':'n/a']];
+  if(c.iso)rows.push(['Shot',`ISO ${c.iso}`+(c.exposure_s?` · 1/${Math.round(1/c.exposure_s)} s`:'')]);if(c.white_k)rows.push(['Camera white',c.white_k+' K']);
+  const chips=[];if(p.denoise!=null)chips.push(`<span class="chip on">denoise ${Math.round(p.denoise*100)}%</span>`);if(p.phone_blur_removal&&phys.deblur)chips.push('<span class="chip on">blur removal</span>');if(p.scene_estimated)chips.push('<span class="chip warn">tone curve baked in</span>');if(c.source_class==='raw-linear-dng')chips.push('<span class="chip">stacked by phone</span>');if(c.source_class==='raw-libraw')chips.push('<span class="chip warn">non-Bayer: no AI denoise or lens data</span>');if(p.lens&&p.lens.applied)chips.push(`<span class="chip on" title="${p.lens.lens}">lens corrected</span>`);else if(p.lens&&phys.lens)chips.push(`<span class="chip warn" title="${p.lens.reason||''}">lens unknown</span>`);if(c.wb_source&&c.wb_source!=='as shot')chips.push('<span class="chip warn">no white balance in file</span>');
+  $('inputInfo').innerHTML=`<dl class="facts">${rows.map(([a,b])=>`<dt>${a}</dt><dd title="${b}">${b}</dd>`).join('')}</dl><div class="route">${chips.join('')}</div>`;
+  swDeblur.disabled=!p.phone_blur_removal&&!(c.source_class==='raw-own');swDn.disabled=!['raw-own','raw-camera'].includes(c.source_class);swLens.disabled=c.source_class!=='raw-camera';swMicro.disabled=swTone.disabled=!p.ai_enhancement}
+async function tick(){
+  try{const n=await (await fetch('/api/state')).json();const first=!S.films;S=n;
+    if(first){buildStatic();buildStrip()}
+    $('devName').textContent=S.device;$('devLamp').className='lamp '+(S.error?'err':S.ready?'ok':'run');
+    const running=S.busy||!S.ready;
+    if(running){showBusy();$('workMsg').textContent=S.message||(S.ready?'Working':'Warming up the engines');$('workTime').textContent=Math.round((Date.now()-busyStart)/1000)+' s';if(S.engine)ENGINES.forEach(([k])=>{if(k===S.engine||(S.engine==='physics'&&k==='color'))setEng(k,'run')})}
+    else{$('work').hidden=true;busyStart=0;$('export').disabled=gen<0}
+    $('toast').hidden=!S.error;$('toast').textContent=S.error||'';
+    if(S.seconds&&!running){if(S.seconds.input!=null)setEng('input','done',S.seconds.input+' s');if(S.seconds.physics!=null)setEng('physics','done',S.seconds.physics+' s');if(gen>=0)setEng('calibrate','done',Object.keys(adj).some(k=>k!=='view'&&adj[k])?'adjusted':'neutral');if(S.seconds.output!=null)setEng('output','done',S.seconds.output+' s')}
+    renderInput();
+    if(S.generation!==gen&&S.generation>0&&!S.busy){cleanKey=cleanKey??editKey();gen=S.generation;$('empty').hidden=true;$('canvas').hidden=false;$('tools').hidden=false;$('export').disabled=false;resetView();requestView();
+      document.querySelectorAll('.fr').forEach(f=>f.classList.toggle('on',f.dataset.path.endsWith(S.file)));$('autoNote').textContent=S.auto_ev!=null?`Auto exposure ${S.auto_ev>=0?'+':''}${S.auto_ev} EV from this photo. Sliders add to it. Double-click a slider to reset.`:''}
+    if(S.exports&&S.exports[0]){const e=S.exports[0];$('done').innerHTML=`<b>${e.file}</b><br>${(e.bytes/1e6).toFixed(1)} MB · ${e.shape[1]} × ${e.shape[0]} · ${e.seconds} s<br><a href="#" class="link" id="rev">Open output folder</a>`;$('rev').onclick=x=>{x.preventDefault();post('/api/reveal')}}
+  }catch(e){$('devName').textContent='server stopped';$('devLamp').className='lamp err'}
+  setTimeout(tick,S.busy||!S.ready?400:1200)}
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='b'||e.key==='B')setCmp(!cmp);if(e.key==='z'||e.key==='Z')toggle100()});
+if(location.hash==='#compare')setTimeout(()=>setCmp(true),600);
+tick();
+</script>
+</body>
+</html>

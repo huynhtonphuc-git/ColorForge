@@ -1,0 +1,40 @@
+{
+ "id": "kodachrome_legacy",
+ "title": "Kodachrome Legacy",
+ "provenance": "fitted look, not film data: bounded controls, calibrated and fused from statistics of publicly shared pictures; no images are used at run time",
+ "hue_families": [
+  "red",
+  "skin_orange",
+  "yellow",
+  "green",
+  "cyan",
+  "blue",
+  "magenta"
+ ],
+ "tone": [
+  -6.25,
+  1.897,
+  -2.572,
+  -1.273,
+  -6.0
+ ],
+ "gain": [
+  1.167,
+  1.2,
+  1.231,
+  0.816,
+  1.798,
+  1.214,
+  0.825
+ ],
+ "turn": [
+  -4.564,
+  2.152,
+  -2.754,
+  14.985,
+  14.948,
+  4.202,
+  -7.731
+ ],
+ "dark": 0.408
+}
