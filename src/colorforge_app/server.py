@@ -203,6 +203,8 @@ class Handler(BaseHTTPRequestHandler):
         u = urlparse(self.path); q = parse_qs(u.query)
         if u.path == "/":
             return self._send((HERE / "index.html").read_bytes(), "text/html; charset=utf-8")
+        if u.path == "/favicon.png":
+            return self._send((ROOT / "assets" / "icon_256.png").read_bytes(), "image/png")
         if u.path == "/api/state":
             with lock:
                 return self._json(state)

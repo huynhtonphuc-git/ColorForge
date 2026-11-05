@@ -1,8 +1,41 @@
-# ColorForge v0.5
+![ColorForge: film physics for the raw files your phone already shoots](assets/banner.png)
 
-A desktop colour app for photographs. **FilmForge**, the first module, turns a raw file into the look of colour slide film by simulating the film rather than applying a preset.
+**Version 0.5, by Huynh Ton Phuc.** A desktop colour app built with phone photographers in mind: shoot raw on your phone, open the DNG, choose a film. **FilmForge**, the first module, turns that file into the look of colour slide film by simulating the film rather than applying a preset. Camera raw works too.
+
+![The same phone raw file: the phone's own preview on the left, ColorForge's Kodachrome Legacy card on the right](assets/gallery/mountain_before_after.jpg)
+
+*One Redmi Turbo 4 Pro raw file. Left: the phone's own preview. Right: the Kodachrome Legacy card with exposure +0.7 EV and saturation -15.*
 
 This is a personal, for-fun research project: source-available for **non-commercial use** under the [PolyForm Noncommercial License 1.0.0](LICENSE). It is not open source in the OSI sense, it is not a product, and there is no warranty or support promise.
+
+## Built with phone photographers in mind
+
+Phone raw is the starting point here, not an afterthought:
+
+- **Noise is handled where it starts.** Small sensors are noisy, so raw is denoised on the sensor mosaic, using a noise model read from the photo itself.
+- **The phone's own blur is removed before the film.** Film sharpness then acts on the scene rather than on the lens's softness. This measured profile exists only for the Redmi Turbo 4 Pro, the phone it was developed on; other phones' raw files open and go through the film, without this step.
+- **Film effects are set in real sizes.** Scatter, edge effects and grain are set in micrometres on a film frame, not in pixels, so a phone photo keeps its own resolution and gets the same film structure as any other.
+- **No gaming PC needed.** It was developed on a laptop with Intel Iris Xe graphics and no NVIDIA card. There, a 12.5 MP phone raw took about 7 to 21 seconds per card at full resolution.
+
+## Gallery
+
+Photos by Huynh Ton Phuc, shot as raw on a Redmi Turbo 4 Pro. Every card uses the same two slider changes, exposure +0.7 EV and saturation -15, and nothing is retouched. Images are reduced to fit this page, so fine grain is hard to see.
+
+### Mountain at dawn
+
+![Mountain photo through nine film cards](assets/gallery/mountain_cards.jpg)
+
+### Bicycle
+
+![Bicycle: the phone's preview beside the Kodachrome Digital card](assets/gallery/bike_before_after.jpg)
+
+![Bicycle photo through nine film cards](assets/gallery/bike_cards.jpg)
+
+### Tree
+
+![Tree: the phone's preview beside the Provia Legacy card](assets/gallery/tree_before_after.jpg)
+
+![Tree photo through nine film cards](assets/gallery/tree_cards.jpg)
 
 ## How it differs from presets and LUTs
 
@@ -32,6 +65,8 @@ Each card has its own curves, dyes, sensitivity, sharpness, grain and starting s
 
 Film data comes from manufacturers' published technical data sheets, read from the drawing paths where possible. Dye data was checked against published spectral measurements of developed film. The looks were recalibrated and fused from statistics of many publicly shared pictures and scans; they were measured only, and no third-party images are in this repository. Numbers in stock files carry a provenance label: `datasheet` or `assumption`.
 
+**Known issues, to be improved in the next update.** Velvia cards push greens too far toward yellow, because of how their grey balance is calibrated; other E-6 cards share the same cause to a lesser degree. Default exposure also runs dark, especially on backlit scenes.
+
 **Be sceptical of the realism claim.** Interimage is not published by any maker and is an assumption, thickness and coupler structure in E-6 are only captured indirectly, the looks rest on small hand-picked sets, and no card has been checked against a real slide viewed next to the screen. Treat every card as an interpretation.
 
 ## Run it
@@ -43,7 +78,7 @@ env\setup.bat
 env\run_colorforge.bat
 ```
 
-The app opens in a local window at http://127.0.0.1:8765. Nothing is uploaded. Photos are not included, so open your own. Tests: `env\cf\python.exe -m pytest tests -q`. Some tests skip because research files and sample photos aren't published.
+The app opens in a local window at http://127.0.0.1:8765. Nothing is uploaded. Raw sample files are not included, so open your own. Tests: `env\cf\python.exe -m pytest tests -q`. Some tests skip because research files and sample photos aren't published.
 
 ## AI models
 
@@ -58,6 +93,6 @@ PyTorch, OpenVINO, NumPy, SciPy, OpenCV, Numba, colour-science, rawpy (LibRaw), 
 
 ## Licence
 
-ColorForge's code, calibration and look data are under the [PolyForm Noncommercial License 1.0.0](LICENSE): free for personal, research and other non-commercial use, and commercial use is not licensed. For anything commercial, ask first. The author keeps the right to offer other licences later. Third-party parts keep their own licences.
+ColorForge's code, calibration and look data are under the [PolyForm Noncommercial License 1.0.0](LICENSE): free for personal, research and other non-commercial use, and commercial use is not licensed. For anything commercial, ask first. The author keeps the right to offer other licences later. The logo and gallery photos are by Huynh Ton Phuc, under the same licence. Third-party parts keep their own licences.
 
 Film names are trademarks of their owners and are used only to describe which film is simulated. This project isn't affiliated with or endorsed by any film maker or photographer.
